@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -7,11 +7,23 @@ function App() {
     { name: "Venkat", email: "venkat@example.com", password: "ramana" },
     { name: "Satwik", email: "satwik@example.com", password: "sevenwick" },
     { name: "Shivani", email: "shivani@example.com", password: "shivani" },
-
   ];
 
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [formCustomer, setFormCustomer] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
   const handleSelect = (customer) => {
-    console.log("Customer selected:", customer);
+    if (selectedCustomer?.email === customer.email) {
+      setSelectedCustomer(null);
+      setFormCustomer({ name: "", email: "", password: "" });
+    } else {
+      setSelectedCustomer(customer);
+      setFormCustomer(customer);
+    }
   };
 
   const handleDelete = () => {
@@ -28,7 +40,6 @@ function App() {
 
   return (
     <div className="container mt-4">
-
       <h1 className="text-center mb-4">Customer List</h1>
 
       <table className="table table-bordered table-hover">
@@ -41,7 +52,11 @@ function App() {
         </thead>
         <tbody>
           {customers.map((customer, index) => (
-            <tr key={index} onClick={() => handleSelect(customer)}>
+            <tr
+              key={index}
+              onClick={() => handleSelect(customer)}
+              style={{ fontWeight: selectedCustomer?.email === customer.email ? "bold" : "normal" }}
+            >
               <td>{customer.name}</td>
               <td>{customer.email}</td>
               <td>{customer.password}</td>
@@ -50,19 +65,46 @@ function App() {
         </tbody>
       </table>
 
-      <h2 className="text-center mb-4">Add / Update Customer</h2>
+      <h2 className="text-center mb-4">
+        {selectedCustomer ? "Update Customer" : "Add Customer"}
+      </h2>
+
       <form className="bg-light p-4 rounded shadow-sm">
         <div className="form-group">
           <label>Name: </label>
-          <input type="text" className="form-control" />
+          <input
+            type="text"
+            className="form-control"
+            value={formCustomer.name}
+            onChange={(e) =>
+              setFormCustomer({ ...formCustomer, name: e.target.value })
+            }
+            placeholder="Customer name"
+          />
         </div>
         <div className="form-group">
           <label>Email: </label>
-          <input type="email" className="form-control" />
+          <input
+            type="email"
+            className="form-control"
+            value={formCustomer.email}
+            onChange={(e) =>
+              setFormCustomer({ ...formCustomer, email: e.target.value })
+            }
+            placeholder="Customer email address"
+          />
         </div>
         <div className="form-group">
           <label>Password: </label>
-          <input type="password" className="form-control" />
+          <input
+            type="password"
+            className="form-control"
+            value={formCustomer.password}
+            onChange={(e) =>
+              setFormCustomer({ ...formCustomer, password: e.target.value })
+            }
+            placeholder="Customer password"
+          />
         </div>
         <div className="text-center">
           <button type="button" className="btn btn-danger mr-2" onClick={handleDelete}>
