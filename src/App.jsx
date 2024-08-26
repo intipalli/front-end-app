@@ -1,25 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {
+  getAll as getAllCustomers,
+  post as addCustomer,
+  put as updateCustomer,
+  deleteById as deleteCustomer
+} from './memdb';
+
+const blankCustomer = { name: "", email: "", password: "" };
 
 function App() {
-  const customers = [
-    { name: "Lalitha", email: "lalithaa@example.com", password: "lalli" },
-    { name: "Venkat", email: "venkat@example.com", password: "ramana" },
-    { name: "Satwik", email: "satwik@example.com", password: "sevenwick" },
-    { name: "Shivani", email: "shivani@example.com", password: "shivani" },
-  ];
-
+  const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [formCustomer, setFormCustomer] = useState({
-    name: "",
-    email: "",
-    password: ""
-  });
+  const [formCustomer, setFormCustomer] = useState(blankCustomer);
+
+  useEffect(() => {
+    const fetchCustomers = () => {
+      const allCustomers = getAllCustomers();
+      setCustomers(allCustomers);
+    };
+    fetchCustomers();
+  }, []);
 
   const handleSelect = (customer) => {
-    if (selectedCustomer?.email === customer.email) {
+    if (selectedCustomer?.id === customer.id) {
       setSelectedCustomer(null);
-      setFormCustomer({ name: "", email: "", password: "" });
+      setFormCustomer(blankCustomer);
     } else {
       setSelectedCustomer(customer);
       setFormCustomer(customer);
@@ -27,15 +33,39 @@ function App() {
   };
 
   const handleDelete = () => {
-    console.log("Delete button clicked");
+    if (selectedCustomer) {
+      deleteCustomer(selectedCustomer.id);
+      const updatedCustomers = getAllCustomers();
+      setCustomers(updatedCustomers);
+      setSelectedCustomer(null);
+      setFormCustomer(blankCustomer);
+    }
   };
 
   const handleSave = () => {
-    console.log("Save button clicked");
+    if (selectedCustomer) {
+      const updatedCustomer = { ...formCustomer, id: selectedCustomer.id };
+      updateCustomer(selectedCustomer.id, updatedCustomer);
+    } else {
+      addCustomer(formCustomer);
+    }
+    const updatedCustomers = getAllCustomers();
+    setCustomers(updatedCustomers);
+    setSelectedCustomer(null);
+    setFormCustomer(blankCustomer);
   };
 
   const handleCancel = () => {
-    console.log("Cancel button clicked");
+    setSelectedCustomer(null);
+    setFormCustomer(blankCustomer);
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormCustomer(prevFormCustomer => ({
+      ...prevFormCustomer,
+      [name]: value
+    }));
   };
 
   return (
@@ -51,11 +81,11 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {customers.map((customer, index) => (
+          {customers.map((customer) => (
             <tr
-              key={index}
+              key={customer.id}
               onClick={() => handleSelect(customer)}
-              style={{ fontWeight: selectedCustomer?.email === customer.email ? "bold" : "normal" }}
+              style={{ fontWeight: selectedCustomer?.id === customer.id ? "bold" : "normal" }}
             >
               <td>{customer.name}</td>
               <td>{customer.email}</td>
@@ -75,10 +105,9 @@ function App() {
           <input
             type="text"
             className="form-control"
+            name="name"
             value={formCustomer.name}
-            onChange={(e) =>
-              setFormCustomer({ ...formCustomer, name: e.target.value })
-            }
+            onChange={handleInputChange}
             placeholder="Customer name"
           />
         </div>
@@ -87,10 +116,9 @@ function App() {
           <input
             type="email"
             className="form-control"
+            name="email"
             value={formCustomer.email}
-            onChange={(e) =>
-              setFormCustomer({ ...formCustomer, email: e.target.value })
-            }
+            onChange={handleInputChange}
             placeholder="Customer email address"
           />
         </div>
@@ -99,10 +127,9 @@ function App() {
           <input
             type="password"
             className="form-control"
+            name="password"
             value={formCustomer.password}
-            onChange={(e) =>
-              setFormCustomer({ ...formCustomer, password: e.target.value })
-            }
+            onChange={handleInputChange}
             placeholder="Customer password"
           />
         </div>
