@@ -1,7 +1,7 @@
 import React from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-
   const customers = [
     { name: "Lalitha", email: "lalithaa@example.com", password: "lalli" },
     { name: "Venkat", email: "venkat@example.com", password: "ramana" },
@@ -27,11 +27,12 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Customer List</h1>
+    <div className="container mt-4">
 
-      <table border="1">
-        <thead>
+      <h1 className="text-center mb-4">Customer List</h1>
+
+      <table className="table table-bordered table-hover">
+        <thead className="thead-light">
           <tr>
             <th>Name</th>
             <th>Email</th>
@@ -49,29 +50,28 @@ function App() {
         </tbody>
       </table>
 
-
-      <h2>Add / Update Customer</h2>
-      <form>
-        <div>
+      <h2 className="text-center mb-4">Add / Update Customer</h2>
+      <form className="bg-light p-4 rounded shadow-sm">
+        <div className="form-group">
           <label>Name: </label>
-          <input type="text" placeholder="Customer name" />
+          <input type="text" className="form-control" />
         </div>
-        <div>
+        <div className="form-group">
           <label>Email: </label>
-          <input type="email" placeholder="Customer email address" />
+          <input type="email" className="form-control" />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password: </label>
-          <input type="password" placeholder="Customer password" />
+          <input type="password" className="form-control" />
         </div>
-        <div>
-          <button type="button" onClick={handleDelete}>
+        <div className="text-center">
+          <button type="button" className="btn btn-danger mr-2" onClick={handleDelete}>
             Delete
           </button>
-          <button type="button" onClick={handleSave}>
+          <button type="button" className="btn btn-success mr-2" onClick={handleSave}>
             Save
           </button>
-          <button type="button" onClick={handleCancel}>
+          <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
         </div>
