@@ -13,21 +13,20 @@ const App = () => {
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
 
   useEffect(() => {
     api.getAll(setCustomers);
   }, []);
 
-  useEffect(() => {
-    if (selectedCustomer) {
-      setFormCustomer(selectedCustomer);
-    } else {
-      setFormCustomer({ id: null, name: "", email: "", password: "" });
-    }
-  }, [selectedCustomer]);
-
   const handleSelect = (customer) => {
-    setSelectedCustomer(prev => (prev && prev.id === customer.id ? null : customer));
+    if (selectedCustomer && selectedCustomer.id === customer.id) {
+      setSelectedCustomer(null);
+      setFormCustomer({ id: null, name: "", email: "", password: "" });
+    } else {
+      setSelectedCustomer(customer);
+      setFormCustomer(customer);
+    }
   };
 
   const handleInputChange = (event) => {
@@ -35,16 +34,33 @@ const App = () => {
     setFormCustomer(prev => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = () => {
+    if (!formCustomer.name) return "Name is required.";
+    if (!formCustomer.email) return "Email is required.";
+    if (!formCustomer.password) return "Password is required.";
+    return "";
+  };
+
   const handleSave = () => {
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError("");
     if (formCustomer.id) {
       api.put(formCustomer.id, formCustomer, () => {
         setSelectedCustomer(null);
+        setFormCustomer({ id: null, name: "", email: "", password: "" });
         api.getAll(setCustomers);
+        alert(`Customer "${formCustomer.name}" updated successfully.`);
       });
     } else {
       api.post(formCustomer, () => {
         setFormCustomer({ id: null, name: "", email: "", password: "" });
         api.getAll(setCustomers);
+        alert(`Customer "${formCustomer.name}" added successfully.`);
       });
     }
   };
@@ -52,8 +68,9 @@ const App = () => {
   const handleDelete = () => {
     if (formCustomer.id) {
       api.deleteById(formCustomer.id, () => {
-        setSelectedCustomer(null);
+        alert(`Customer "${formCustomer.name}" deleted successfully.`);
         setFormCustomer({ id: null, name: "", email: "", password: "" });
+        setSelectedCustomer(null);
         api.getAll(setCustomers);
       });
     }
@@ -62,11 +79,13 @@ const App = () => {
   const handleCancel = () => {
     setFormCustomer({ id: null, name: "", email: "", password: "" });
     setSelectedCustomer(null);
+    setError("");
   };
 
   return (
     <div className="container mt-4">
       <h1 className="text-center mb-4">Customer List</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
       <CustomerList 
         customers={customers} 
         selectedCustomer={selectedCustomer} 

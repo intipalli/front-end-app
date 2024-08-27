@@ -41,11 +41,13 @@ const CustomerAddUpdateForm = ({ formCustomer, onInputChange, onSave, onDelete, 
           />
         </div>
         <div className="text-center">
-          <button type="button" className="btn btn-danger mr-2" onClick={onDelete}>
-            Delete
-          </button>
+          {formCustomer.id && (
+            <button type="button" className="btn btn-danger mr-2" onClick={onDelete}>
+              Delete
+            </button>
+          )}
           <button type="button" className="btn btn-success mr-2" onClick={onSave}>
-            Save
+            {formCustomer.id ? "Update" : "Add"}
           </button>
           <button type="button" className="btn btn-secondary" onClick={onCancel}>
             Cancel
