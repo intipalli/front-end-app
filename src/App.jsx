@@ -20,6 +20,7 @@ const App = () => {
   const handleSelect = (customer) => {
     setSelectedCustomer(customer);
     setFormCustomer(customer);
+  
   };
 
   const handleInputChange = (event) => {
@@ -35,6 +36,7 @@ const App = () => {
 
     if (formCustomer.id) {
       api.put(formCustomer.id, formCustomer, () => {
+        setError(null);
         toast.success(`Customer ${formCustomer.name} updated successfully!`);
         navigate("/customers");
         setFormCustomer({ id: null, name: "", email: "", password: "" });
@@ -42,6 +44,7 @@ const App = () => {
       });
     } else {
       api.post(formCustomer, () => {
+        setError(null);
         toast.success(`Customer ${formCustomer.name} added successfully!`);
         navigate("/customers");
         setFormCustomer({ id: null, name: "", email: "", password: "" });
@@ -64,6 +67,7 @@ const App = () => {
 
   const handleCancel = (navigate) => {
     setFormCustomer({ id: null, name: "", email: "", password: "" });
+    setError(null);
     navigate("/customers");
   };
 

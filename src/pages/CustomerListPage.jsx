@@ -8,9 +8,9 @@ const CustomerListPage = ({ customers, selectedCustomer, onSelect }) => {
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between mb-3">
-        <h1>Customer Manager</h1>
+        <h1 class="text text-primary">Customer Manager</h1>
         <div>
-          <button className="btn btn-success mr-2" onClick={() => navigate("/customers/add")}>
+          <button className="btn btn-success mr-2" disabled={selectedCustomer} onClick={() => navigate("/customers/add")}>
             Add Customer
           </button>
           <button
